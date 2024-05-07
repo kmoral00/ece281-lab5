@@ -91,17 +91,18 @@ signal w_clk   : std_logic;
 
 --regA
 component regA is
-    port( i_L : in std_logic_vector(3 downto 0);
+    port( i_L    : in std_logic_vector(3 downto 0);
           i_regA : in std_logic_vector(7 downto 0);
           o_regA : out std_logic_vector(7 downto 0));
+--          i_btn  : in std_logic);
 end component regA;
-
-signal w_regAin : std_logic_vector(7 downto 0);
+          
+signal w_regAin  : std_logic_vector(7 downto 0);
 signal w_regAout : std_logic_vector(7 downto 0);
 
 --regB
 component regB is
-    port( i_L : in std_logic_vector(3 downto 0);
+    port( i_L    : in std_logic_vector(3 downto 0);
           i_regB : in std_logic_vector(7 downto 0);         
           o_regB : out std_logic_vector(7 downto 0));
 end component regB;
@@ -120,7 +121,7 @@ component twoscomp_decimal is
             o_ones: out std_logic_vector(3 downto 0)
     );
 end component twoscomp_decimal;
-signal w_bin : std_logic_vector(7 downto 0);
+--signal w_bin : std_logic_vector(7 downto 0);
 signal w_negative : std_logic_vector (3 downto 0);
 signal w_hund : std_logic_vector(3 downto 0);
 signal w_tens : std_logic_vector(3 downto 0);
@@ -155,14 +156,16 @@ component TDM4 is
     );
 end component TDM4;
 
-signal w_data : std_logic_vector(3 downto 0);
+signal w_data, w_sel : std_logic_vector(3 downto 0);
 --signal w_sel : std_logic_vector(3 downto 0);
 
 
 begin
 
-led(12 downto 4) <= "000000000";
+--led(12 downto 4) <= "000000000";
+led(12 downto 5) <= w_regAout;
 led(3 downto 0) <= w_cycle;
+w_clk <= clk;
 
 	-- PORT MAPS ----------------------------------------
 controller_fsm_inst: controller_fsm
@@ -176,7 +179,8 @@ controller_fsm_inst: controller_fsm
 regA_inst: regA
     port map( i_regA => sw(7 downto 0),
               o_regA => w_regAout,
-              i_L => w_cycle 
+              i_L => w_cycle
+--              i_btn => btnC
     );
  
  regB_inst: regB
@@ -197,7 +201,7 @@ ALU_inst: ALU
 --------------------------------------------------------------------------------      
 	
 twoscomp_decimal_inst: twoscomp_decimal
-    port map( i_binary   => w_bin,
+    port map( i_binary   => w_out,
               o_negative => w_negative,
               o_hundreds => w_hund,
               o_tens     => w_tens,
@@ -212,10 +216,11 @@ TDM4_inst: TDM4
               i_D1 => w_tens,
               i_D0 => w_ones,
               o_data => w_data,
-              o_sel => an
+              o_sel => w_sel
     );
 
 clock_divider_inst: clock_divider
+    generic map (k_DIV => 10000)
     port map(o_clk => w_clk_TDM4,
              i_clk => w_clk,
              i_reset => btnU
@@ -237,7 +242,8 @@ MUX_4_1_inst: MUX_4_1
 
 	
 	-- CONCURRENT STATEMENTS ----------------------------
-	
+	an <= x"F" when w_cycle = "0000" else w_sel;
+
 	
 	
 end top_basys3_arch;
