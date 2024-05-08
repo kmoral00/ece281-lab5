@@ -62,6 +62,8 @@ component sevenSegDecoder is
             o_S : out std_logic_vector (6 downto 0)      
     );
 end component sevenSegDecoder;
+
+signal w_S : std_logic_vector ( 6 downto 0);
   
   --clock divider
 component clock_divider is
@@ -93,8 +95,8 @@ signal w_clk   : std_logic;
 component regA is
     port( i_L    : in std_logic_vector(3 downto 0);
           i_regA : in std_logic_vector(7 downto 0);
-          o_regA : out std_logic_vector(7 downto 0));
---          i_btn  : in std_logic);
+          o_regA : out std_logic_vector(7 downto 0);
+          i_btn  : in std_logic);
 end component regA;
           
 signal w_regAin  : std_logic_vector(7 downto 0);
@@ -157,6 +159,7 @@ component TDM4 is
 end component TDM4;
 
 signal w_data, w_sel : std_logic_vector(3 downto 0);
+signal w_negative_sign : std_logic_vector(3 downto 0);
 --signal w_sel : std_logic_vector(3 downto 0);
 
 
@@ -179,8 +182,8 @@ controller_fsm_inst: controller_fsm
 regA_inst: regA
     port map( i_regA => sw(7 downto 0),
               o_regA => w_regAout,
-              i_L => w_cycle
---              i_btn => btnC
+              i_L => w_cycle,
+              i_btn => btnC
     );
  
  regB_inst: regB
@@ -208,10 +211,12 @@ twoscomp_decimal_inst: twoscomp_decimal
               o_ones     => w_ones  
     );
     
+-- w_negative_sign <= x"A" when (w_negative = "1111") else x"F";
+    
 TDM4_inst: TDM4
     port map( i_reset => btnU,
               i_clk => w_clk_TDM4,
-              i_D3=> w_negative,
+              i_D3=> w_negative, --w_negative
               i_D2 => w_hund,
               i_D1 => w_tens,
               i_D0 => w_ones,
@@ -231,6 +236,8 @@ sevenSegDecoder_inst: sevenSegDecoder
               o_S => seg
     );
     
+
+    
 MUX_4_1_inst: MUX_4_1
     port map( i_A      => w_regAout, 
               i_B      => w_regBout,
@@ -243,7 +250,7 @@ MUX_4_1_inst: MUX_4_1
 	
 	-- CONCURRENT STATEMENTS ----------------------------
 	an <= x"F" when w_cycle = "0000" else w_sel;
-
+    
 	
 	
 end top_basys3_arch;
