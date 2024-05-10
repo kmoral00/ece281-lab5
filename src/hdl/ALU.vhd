@@ -58,7 +58,7 @@ architecture behavioral of ALU is
          signal w_shift_right : std_logic_vector(7 downto 0);
          signal w_shift_left  : std_logic_vector(7 downto 0);
          signal w_and_or_bits : std_logic_vector(7 downto 0);
-         signal w_add     : std_logic_vector(8 downto 0);
+         signal w_add         : std_logic_vector(8 downto 0);
          signal w_AS          : std_logic_vector(7 downto 0);
          signal w_neg         : std_logic_vector(7 downto 0);
          signal w_carry       : std_logic;
