@@ -19,6 +19,13 @@
 --|    sm_<state machine type>  = state machine type definition
 --|    s_<signal name>          = state name
 --|
+
+--Documentation Statement: 
+--C3C Culp helped me by explainging the function of the MUX in the top basys file to enhance my understanding
+--of how the component works and its purpose within the lab. He also helped me with my controller fsm by explaing how it was going to
+-- be modeled after the stoplight fsm due to how it is an FSM that needed f_Q and f_Q_next. He also helped with 
+--debugging the controlller fsm. C3C Leong helped me by explaing how the flags in the CPU operate to help 
+--better my understanding when drawing the schematic for the ALU.
 --+----------------------------------------------------------------------------
 library ieee;
   use ieee.std_logic_1164.all;
